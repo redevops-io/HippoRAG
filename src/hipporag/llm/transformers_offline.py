@@ -1,7 +1,13 @@
 from typing import Tuple, List
 import torch.cuda
-import outlines.generate as generate
-import outlines.models as models
+
+try:
+    import outlines.generate as generate
+    import outlines.models as models
+except ImportError:
+    generate = None
+    models = None
+
 import json
 
 from .base import BaseLLM, LLMConfig
@@ -27,7 +33,13 @@ def convert_text_chat_messages_to_input_string(messages: List[TextChatMessage], 
     )
     return prompt
 
-from vllm import SamplingParams
+
+try:
+    from vllm import SamplingParams
+except ImportError:
+    SamplingParams = None
+
+
 class TransformersOffline:
 
     def _init_llm_config(self) -> None:

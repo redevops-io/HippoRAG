@@ -24,7 +24,13 @@ def convert_text_chat_messages_to_input_ids(messages: List[TextChatMessage], tok
     )
     encoded = tokenizer(prompt, add_special_tokens=False)
     return encoded['input_ids']
-from vllm import SamplingParams, LLM
+
+try:
+    from vllm import SamplingParams, LLM
+except ImportError:
+    SamplingParams = None
+    LLM = None
+
 class VLLMOffline:
 
     def _init_llm_config(self) -> None:

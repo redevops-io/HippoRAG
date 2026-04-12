@@ -183,6 +183,14 @@ class CacheOpenAI(BaseLLM):
             # TODO strange version change in openai protocol, but our current vllm version not changed yet
             params['max_tokens'] = params.pop('max_completion_tokens')
 
+        # gpt-5-mini (and similar reasoning models) only support temperature=1
+        # and reject seed=None.  Strip unsupported values to avoid 400 errors.
+        model_lower = params.get("model", "").lower()
+        if "gpt-5" in model_lower or "o1" in model_lower or "o3" in model_lower:
+            params.pop("temperature", None)
+            if params.get("seed") is None:
+                params.pop("seed", None)
+
         response = self.openai_client.chat.completions.create(**params)
 
         response_message = response.choices[0].message.content

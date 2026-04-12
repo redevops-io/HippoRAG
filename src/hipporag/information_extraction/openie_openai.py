@@ -154,7 +154,10 @@ class OpenIE:
         total_completion_tokens = 0
         num_cache_hit = 0
 
-        with ThreadPoolExecutor() as executor:
+        # Limit concurrency to avoid OpenAI rate limits (default 32 is too aggressive)
+        max_workers = min(8, len(chunk_passages))
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             # Create NER futures for each chunk
             ner_futures = {
                 executor.submit(self.ner, chunk_key, passage): chunk_key
@@ -180,7 +183,7 @@ class OpenIE:
 
         triple_results_list = []
         total_prompt_tokens, total_completion_tokens, num_cache_hit = 0, 0, 0
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             # Create triple extraction futures for each chunk
             re_futures = {
                 executor.submit(self.triple_extraction, ner_result.chunk_id,
