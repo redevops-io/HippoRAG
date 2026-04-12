@@ -23,14 +23,14 @@ def main():
     ]
 
     save_dir = 'outputs/azure'  # Define save directory for HippoRAG objects (each LLM/Embedding model combination will create a new subdirectory)
-    llm_model_name = 'gpt-4o-mini'  # Any OpenAI model name
+    llm_model_name = 'gpt-5-mini'  # Any OpenAI model name
     embedding_model_name = 'text-embedding-3-small'  # Embedding model name (NV-Embed, GritLM or Contriever for now)
 
     # Startup a HippoRAG instance
     hipporag = HippoRAG(save_dir=save_dir,
                         llm_model_name=llm_model_name,
                         embedding_model_name=embedding_model_name,
-                        azure_endpoint="https://[ENDPOINT NAME].openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview",
+                        azure_endpoint="https://[ENDPOINT NAME].openai.azure.com/openai/deployments/gpt-5-mini/chat/completions?api-version=2025-01-01-preview",
                         azure_embedding_endpoint="https://[ENDPOINT NAME].openai.azure.com/openai/deployments/text-embedding-3-small/embeddings?api-version=2023-05-15"
                         )
 
