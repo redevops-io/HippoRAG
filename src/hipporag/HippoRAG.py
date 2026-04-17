@@ -959,9 +959,11 @@ class HippoRAG:
         for chunk_key, row in chunks_to_save.items():
             passage = row['content']
             try:
+                raw_ents = ner_results_dict[chunk_key].unique_entities
+                raw_trips = triple_results_dict[chunk_key].triples
                 chunk_openie_info = {'idx': chunk_key, 'passage': passage,
-                                 'extracted_entities': ner_results_dict[chunk_key].unique_entities,
-                                 'extracted_triples': triple_results_dict[chunk_key].triples}
+                                 'extracted_entities': [e for e in raw_ents if isinstance(e, str)],
+                                 'extracted_triples': [t for t in raw_trips if isinstance(t, (list, tuple)) and all(isinstance(x, str) for x in t)]}
             except Exception as e:
                 logger.error(f"Error processing chunk {chunk_key}: {e}")
                 chunk_openie_info = {'idx': chunk_key, 'passage': passage,
@@ -983,9 +985,21 @@ class HippoRAG:
                 extracted entities.
         """
 
-        sum_phrase_chars = sum([len(e) for chunk in all_openie_info for e in chunk['extracted_entities']])
-        sum_phrase_words = sum([len(e.split()) for chunk in all_openie_info for e in chunk['extracted_entities']])
-        num_phrases = sum([len(chunk['extracted_entities']) for chunk in all_openie_info])
+        def _sanitize(obj):
+            """Recursively remove non-JSON-serializable objects (e.g. Ellipsis from eval)."""
+            if obj is ...:
+                return None
+            if isinstance(obj, dict):
+                return {k: _sanitize(v) for k, v in obj.items()}
+            if isinstance(obj, (list, tuple)):
+                return [_sanitize(v) for v in obj if v is not ...]
+            return obj
+
+        all_openie_info = _sanitize(all_openie_info)
+
+        sum_phrase_chars = sum([len(e) for chunk in all_openie_info for e in chunk['extracted_entities'] if isinstance(e, str)])
+        sum_phrase_words = sum([len(e.split()) for chunk in all_openie_info for e in chunk['extracted_entities'] if isinstance(e, str)])
+        num_phrases = sum([len([e for e in chunk['extracted_entities'] if isinstance(e, str)]) for chunk in all_openie_info])
 
         if len(all_openie_info) > 0:
             # Avoid division by zero if there are no phrases
