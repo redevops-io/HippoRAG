@@ -1,3 +1,6 @@
+> **Fork notice.** This is a ReDevOps fork of [OSU-NLP-Group/HippoRAG](https://github.com/OSU-NLP-Group/HippoRAG) based on upstream commit `ea60181` (2026-07-24). Local delta: none (0 commits ahead, 0 files changed). Sync status on 2026-10-15: 14 commits behind upstream `main`.
+> Everything below is upstream's README; versions, tags and badges are inherited and may not reflect this fork. See [PROVENANCE.md](PROVENANCE.md). Licence: MIT retained.
+
 <h1 align="center">HippoRAG 2: From RAG to Memory</h1>
 <p align="center">
     <img src="https://github.com/OSU-NLP-Group/HippoRAG/raw/main/images/hippo_brain.png" width="55%" style="max-width: 300px;">
